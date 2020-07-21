@@ -5,6 +5,7 @@ package com.stpunk47.WeatherApp.controller;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,44 @@ public class WeatherService {
         }
         return null;
     }
+
+    public JSONArray weatherDataArray(String name) throws JSONException{
+
+            JSONArray weatherJSONArray = getWeather(name).getJSONArray("weather");
+
+            return weatherJSONArray;
+
+    }
+
+    public JSONObject getWeatherMainData(String name) throws JSONException {
+        JSONObject weatherMainData = getWeather(name).getJSONObject("main");
+
+        return weatherMainData;
+    }
+
+    public int getVisibilityData(String name) throws JSONException {
+        int visibilityData = getWeather(name).getInt("visibility");
+
+        return visibilityData;
+    }
+
+    public JSONObject getWindData(String name) throws JSONException {
+        JSONObject windData = getWeather(name).getJSONObject("wind");
+
+        return windData;
+    }
+
+    public JSONObject getCloudsData(String name) throws JSONException {
+        JSONObject cloudsData = getWeather(name).getJSONObject("clouds");
+
+        return cloudsData;
+    }
+
+    public JSONObject getSysData(String name) throws JSONException {
+        JSONObject sysData = getWeather(name).getJSONObject("sys");
+
+        return sysData;
+    }
+
 
 }
