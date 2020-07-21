@@ -9,6 +9,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class MainView extends UI {
     private Label windSpeedLabel;
     private Label sunriseLabel;
     private Label sunsetLabel;
+    private ExternalResource img;
+    private Embedded image;
 
 
     @Override
@@ -42,6 +47,16 @@ public class MainView extends UI {
         setUpForm();
         dashBoardTitle();
         dashBoardDescription();
+
+        showWeatherButton.addClickListener(clickEvent ->{
+            if (!cityTextField.getValue().equals("")) {
+                try {
+                    updateUI();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else Notification.show("Please enter a city ");
+        });
 
     }
 
@@ -60,7 +75,7 @@ public class MainView extends UI {
         HorizontalLayout header = new HorizontalLayout();
         header.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-        Label title = new Label("Weather");
+        Label title = new Label("Погода для тупеньких");
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_BOLD);
         title.addStyleName(ValoTheme.LABEL_COLORED);
@@ -125,9 +140,8 @@ public class MainView extends UI {
         HorizontalLayout dashBoardMain = new HorizontalLayout();
         dashBoardMain.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-        ExternalResource img =
-                new ExternalResource("http://openweathermap.org/img/wn/11n@2x.png");
-        Embedded image = new Embedded(null, img);
+
+        image = new Embedded(null, img);
 
 
 
@@ -189,6 +203,28 @@ public class MainView extends UI {
 
         mainDescriptionLayout.addComponents(descriptionVerticalLayout, pressureLayout);
         mainLayout.addComponent(mainDescriptionLayout);
+
+    }
+
+    private void updateUI() throws JSONException {
+        String city = cityTextField.getValue().toUpperCase();
+
+        currentLocationTitle.setValue("Currently in "+city);
+        JSONObject mainData = weatherService.getWeatherMainData(city);
+
+        int temp = mainData.getInt("temp");
+        currentTemp.setValue(temp+"C");
+
+        String iconCode = null;
+        JSONArray jsonArray = weatherService.weatherDataArray(city);
+        for(int i = 0; i<jsonArray.length();i++){
+            JSONObject weatherObject = jsonArray.getJSONObject(i);
+            iconCode = weatherObject.getString("icon");
+        }
+
+
+        img = new ExternalResource("http://openweathermap.org/img/wn/"+iconCode+"@2x.png");
+
 
     }
 }
