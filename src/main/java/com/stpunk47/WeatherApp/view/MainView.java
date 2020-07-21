@@ -2,25 +2,101 @@ package com.stpunk47.WeatherApp.view;
 
 
 import com.stpunk47.WeatherApp.controller.WeatherService;
+import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.UI;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 
 @SpringUI
 public class MainView extends UI {
 
     @Autowired
     private WeatherService weatherService;
+    private VerticalLayout mainLayout;
+    private NativeSelect<String> unitSelect;
 
 
     @Override
     protected void init(VaadinRequest request) {
+        setLayout();
+        setHeader();
+        setLogo();
+        setUpForm();
 
-        try {
+    }
+
+
+
+
+    public void setLayout(){
+        mainLayout = new VerticalLayout();
+        mainLayout.setWidth("100%");
+        mainLayout.setMargin(true);
+        mainLayout.setSpacing(true);
+
+        mainLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        setContent(mainLayout);
+    }
+
+    private void setHeader() {
+        HorizontalLayout header = new HorizontalLayout();
+        header.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        Label title = new Label("Weather");
+        title.addStyleName(ValoTheme.LABEL_H1);
+        title.addStyleName(ValoTheme.LABEL_BOLD);
+        title.addStyleName(ValoTheme.LABEL_COLORED);
+
+        header.addComponent(title);
+
+
+
+        mainLayout.addComponent(header);
+
+    }
+
+    private void setLogo() {
+        HorizontalLayout logoLayout = new HorizontalLayout();
+        logoLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        Image weatherIcon =
+                new Image(null, new ClassResource("/weather/weather_icons-02.png"));
+        weatherIcon.setWidth("125px");
+        weatherIcon.setHeight("125px");
+
+        logoLayout.addComponent(weatherIcon);
+        mainLayout.addComponent(logoLayout);
+    }
+
+    private void setUpForm() {
+        HorizontalLayout formLayout = new HorizontalLayout();
+        formLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+        formLayout.setSpacing(true);
+        formLayout.setMargin(true);
+
+        unitSelect = new NativeSelect<>();
+        unitSelect.setWidth("40px");
+        ArrayList<String> items = new ArrayList<>();
+        items.add("C");
+        items.add("F");
+
+        unitSelect.setItems(items);
+        unitSelect.setValue(items.get(0));
+        formLayout.addComponent(unitSelect);
+        mainLayout.addComponent(formLayout);
+
+
+    }
+}
+
+/*
+
+try {
             JSONArray jsonArray = weatherService.weatherDataArray("lviv");
             JSONObject mainData = weatherService.getWeatherMainData("lviv");
             int visibilityData = weatherService.getVisibilityData("lviv");
@@ -61,5 +137,5 @@ public class MainView extends UI {
             e.printStackTrace();
         }
 
-    }
-}
+
+ */
