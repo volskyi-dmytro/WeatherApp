@@ -24,6 +24,14 @@ public class MainView extends UI {
     private Button showWeatherButton;
     private Label currentLocationTitle;
     private Label currentTemp;
+    private Label weatherDescription;
+    private Label weatherMin;
+    private Label weatherMax;
+    private Label pressureLabel;
+    private Label humidityLabel;
+    private Label windSpeedLabel;
+    private Label sunriseLabel;
+    private Label sunsetLabel;
 
 
     @Override
@@ -33,11 +41,9 @@ public class MainView extends UI {
         setLogo();
         setUpForm();
         dashBoardTitle();
+        dashBoardDescription();
 
     }
-
-
-
 
     private void setLayout(){
         mainLayout = new VerticalLayout();
@@ -140,6 +146,49 @@ public class MainView extends UI {
 
 
 
+
+    }
+
+    private void dashBoardDescription() {
+        HorizontalLayout mainDescriptionLayout = new HorizontalLayout();
+        mainDescriptionLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        //Description Vertical Layout
+        VerticalLayout descriptionVerticalLayout = new VerticalLayout();
+        descriptionVerticalLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
+        descriptionVerticalLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        weatherDescription = new Label("Description: Clear Skies");
+        descriptionVerticalLayout.addComponent(weatherDescription);
+
+        weatherMin = new Label("Weather Min: 12C");
+        descriptionVerticalLayout.addComponent(weatherMin);
+
+        weatherMax = new Label("Weather Max: 22C");
+        descriptionVerticalLayout.addComponent(weatherMax);
+
+
+        //Pressure, humidity etc...
+        VerticalLayout pressureLayout = new VerticalLayout();
+        pressureLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        pressureLabel = new Label("Pressure is: 400pa");
+        pressureLayout.addComponent(pressureLabel);
+
+        humidityLabel = new Label("Humidity is: 47");
+        pressureLayout.addComponent(humidityLabel);
+
+        windSpeedLabel = new Label("Wind speed: 40/hr");
+        pressureLayout.addComponent(windSpeedLabel);
+
+        sunriseLabel = new Label("Sunrise: 123123123");
+        pressureLayout.addComponent(sunriseLabel);
+
+        sunsetLabel = new Label("Sunset: 123123443");
+        pressureLayout.addComponent(sunsetLabel);
+
+        mainDescriptionLayout.addComponents(descriptionVerticalLayout, pressureLayout);
+        mainLayout.addComponent(mainDescriptionLayout);
 
     }
 }
