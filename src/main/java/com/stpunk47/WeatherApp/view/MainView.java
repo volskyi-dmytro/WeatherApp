@@ -2,7 +2,9 @@ package com.stpunk47.WeatherApp.view;
 
 
 import com.stpunk47.WeatherApp.controller.WeatherService;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ClassResource;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
@@ -18,6 +20,10 @@ public class MainView extends UI {
     private WeatherService weatherService;
     private VerticalLayout mainLayout;
     private NativeSelect<String> unitSelect;
+    private TextField cityTextField;
+    private Button showWeatherButton;
+    private Label currentLocationTitle;
+    private Label currentTemp;
 
 
     @Override
@@ -26,13 +32,14 @@ public class MainView extends UI {
         setHeader();
         setLogo();
         setUpForm();
+        dashBoardTitle();
 
     }
 
 
 
 
-    public void setLayout(){
+    private void setLayout(){
         mainLayout = new VerticalLayout();
         mainLayout.setWidth("100%");
         mainLayout.setMargin(true);
@@ -75,10 +82,11 @@ public class MainView extends UI {
 
     private void setUpForm() {
         HorizontalLayout formLayout = new HorizontalLayout();
-        formLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+        formLayout.setDefaultComponentAlignment(Alignment.TOP_CENTER);
         formLayout.setSpacing(true);
         formLayout.setMargin(true);
 
+        // adding selection of units
         unitSelect = new NativeSelect<>();
         unitSelect.setWidth("40px");
         ArrayList<String> items = new ArrayList<>();
@@ -88,7 +96,49 @@ public class MainView extends UI {
         unitSelect.setItems(items);
         unitSelect.setValue(items.get(0));
         formLayout.addComponent(unitSelect);
+
+
+        //adding cityTextField for input
+        cityTextField = new TextField();
+        cityTextField.setWidth("80%");
+        formLayout.addComponent(cityTextField);
+
+
+        //adding 'show weather' button
+        showWeatherButton = new Button();
+        showWeatherButton.setIcon(VaadinIcons.SEARCH);
+        formLayout.addComponent(showWeatherButton);
+
+
         mainLayout.addComponent(formLayout);
+
+
+    }
+
+    private void dashBoardTitle() {
+        HorizontalLayout dashBoardMain = new HorizontalLayout();
+        dashBoardMain.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        ExternalResource img =
+                new ExternalResource("http://openweathermap.org/img/wn/11n@2x.png");
+        Embedded image = new Embedded(null, img);
+
+
+
+        currentLocationTitle = new Label("Currently in ...");
+        currentLocationTitle.addStyleName(ValoTheme.LABEL_H2);
+        currentLocationTitle.addStyleName(ValoTheme.LABEL_LIGHT);
+
+        currentTemp = new Label("20C");
+        currentTemp.addStyleName(ValoTheme.LABEL_H1);
+        currentTemp.addStyleName(ValoTheme.LABEL_BOLD);
+        currentTemp.addStyleName(ValoTheme.LABEL_LIGHT);
+
+        dashBoardMain.addComponents(currentLocationTitle, image, currentTemp);
+
+        mainLayout.addComponent(dashBoardMain);
+
+
 
 
     }
