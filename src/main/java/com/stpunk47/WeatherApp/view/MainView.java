@@ -36,7 +36,8 @@ public class MainView extends UI {
     private Label sunriseLabel;
     private Label sunsetLabel;
     private ExternalResource img;
-    private Embedded image;
+    private Image iconImage;
+    private HorizontalLayout dashBoardMain;
 
 
     @Override
@@ -46,12 +47,13 @@ public class MainView extends UI {
         setLogo();
         setUpForm();
         dashBoardTitle();
-        dashBoardDescription();
+
 
         showWeatherButton.addClickListener(clickEvent ->{
             if (!cityTextField.getValue().equals("")) {
                 try {
                     updateUI();
+                    dashBoardDescription();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -61,6 +63,7 @@ public class MainView extends UI {
     }
 
     private void setLayout(){
+        iconImage = new Image();
         mainLayout = new VerticalLayout();
         mainLayout.setWidth("100%");
         mainLayout.setMargin(true);
@@ -137,11 +140,10 @@ public class MainView extends UI {
     }
 
     private void dashBoardTitle() {
-        HorizontalLayout dashBoardMain = new HorizontalLayout();
+        dashBoardMain = new HorizontalLayout();
         dashBoardMain.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
 
-        image = new Embedded(null, img);
 
 
 
@@ -154,9 +156,7 @@ public class MainView extends UI {
         currentTemp.addStyleName(ValoTheme.LABEL_BOLD);
         currentTemp.addStyleName(ValoTheme.LABEL_LIGHT);
 
-        dashBoardMain.addComponents(currentLocationTitle, image, currentTemp);
 
-        mainLayout.addComponent(dashBoardMain);
 
 
 
@@ -217,14 +217,23 @@ public class MainView extends UI {
 
         String iconCode = null;
         JSONArray jsonArray = weatherService.weatherDataArray(city);
+
         for(int i = 0; i<jsonArray.length();i++){
             JSONObject weatherObject = jsonArray.getJSONObject(i);
             iconCode = weatherObject.getString("icon");
         }
 
+        iconImage.setSource(new ExternalResource("http://openweathermap.org/img/wn/"+iconCode+"@2x.png"));
 
-        img = new ExternalResource("http://openweathermap.org/img/wn/"+iconCode+"@2x.png");
+        dashBoardMain.addComponents(currentLocationTitle, iconImage, currentTemp);
 
+        mainLayout.addComponent(dashBoardMain);
+
+        showDescription();
+
+    }
+
+    private void showDescription(){
 
     }
 }
