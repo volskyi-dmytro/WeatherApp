@@ -38,6 +38,9 @@ public class MainView extends UI {
     private ExternalResource img;
     private Image iconImage;
     private HorizontalLayout dashBoardMain;
+    private HorizontalLayout mainDescriptionLayout;
+    private VerticalLayout descriptionLayout;
+    private VerticalLayout pressureLayout;
 
 
     @Override
@@ -47,13 +50,14 @@ public class MainView extends UI {
         setLogo();
         setUpForm();
         dashBoardTitle();
+        dashBoardDescription();
 
 
-        showWeatherButton.addClickListener(clickEvent ->{
+        showWeatherButton.addClickListener(clickEvent -> {
             if (!cityTextField.getValue().equals("")) {
                 try {
                     updateUI();
-                    dashBoardDescription();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -62,8 +66,18 @@ public class MainView extends UI {
 
     }
 
-    private void setLayout(){
+    private void setLayout() {
         iconImage = new Image();
+        weatherDescription = new Label("Description: Clear Skies");
+        weatherMin = new Label("Weather Min: 12C");
+        weatherMax = new Label("Weather Max: 22C");
+        pressureLabel = new Label("Pressure is: 400pa");
+        humidityLabel = new Label("Humidity is: 47");
+        windSpeedLabel = new Label("Wind speed: 40/hr");
+        sunriseLabel = new Label("Sunrise: 123123123");
+        sunsetLabel = new Label("Sunset: 123123443");
+
+
         mainLayout = new VerticalLayout();
         mainLayout.setWidth("100%");
         mainLayout.setMargin(true);
@@ -78,13 +92,12 @@ public class MainView extends UI {
         HorizontalLayout header = new HorizontalLayout();
         header.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-        Label title = new Label("Погода для тупеньких");
+        Label title = new Label("Weather app");
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_BOLD);
         title.addStyleName(ValoTheme.LABEL_COLORED);
 
         header.addComponent(title);
-
 
 
         mainLayout.addComponent(header);
@@ -144,9 +157,6 @@ public class MainView extends UI {
         dashBoardMain.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
 
-
-
-
         currentLocationTitle = new Label("Currently in ...");
         currentLocationTitle.addStyleName(ValoTheme.LABEL_H2);
         currentLocationTitle.addStyleName(ValoTheme.LABEL_LIGHT);
@@ -157,51 +167,38 @@ public class MainView extends UI {
         currentTemp.addStyleName(ValoTheme.LABEL_LIGHT);
 
 
-
-
-
-
     }
 
     private void dashBoardDescription() {
-        HorizontalLayout mainDescriptionLayout = new HorizontalLayout();
+        mainDescriptionLayout = new HorizontalLayout();
         mainDescriptionLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
         //Description Vertical Layout
-        VerticalLayout descriptionVerticalLayout = new VerticalLayout();
-        descriptionVerticalLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
-        descriptionVerticalLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+        descriptionLayout = new VerticalLayout();
+        descriptionLayout.addStyleName(ValoTheme.FORMLAYOUT_LIGHT);
+        descriptionLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-        weatherDescription = new Label("Description: Clear Skies");
-        descriptionVerticalLayout.addComponent(weatherDescription);
+        descriptionLayout.addComponent(weatherDescription);
 
-        weatherMin = new Label("Weather Min: 12C");
-        descriptionVerticalLayout.addComponent(weatherMin);
+        descriptionLayout.addComponent(weatherMin);
 
-        weatherMax = new Label("Weather Max: 22C");
-        descriptionVerticalLayout.addComponent(weatherMax);
-
+        descriptionLayout.addComponent(weatherMax);
 
         //Pressure, humidity etc...
-        VerticalLayout pressureLayout = new VerticalLayout();
+        pressureLayout = new VerticalLayout();
         pressureLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-        pressureLabel = new Label("Pressure is: 400pa");
         pressureLayout.addComponent(pressureLabel);
 
-        humidityLabel = new Label("Humidity is: 47");
         pressureLayout.addComponent(humidityLabel);
 
-        windSpeedLabel = new Label("Wind speed: 40/hr");
         pressureLayout.addComponent(windSpeedLabel);
 
-        sunriseLabel = new Label("Sunrise: 123123123");
         pressureLayout.addComponent(sunriseLabel);
 
-        sunsetLabel = new Label("Sunset: 123123443");
         pressureLayout.addComponent(sunsetLabel);
 
-        mainDescriptionLayout.addComponents(descriptionVerticalLayout, pressureLayout);
+        mainDescriptionLayout.addComponents(descriptionLayout, pressureLayout);
         mainLayout.addComponent(mainDescriptionLayout);
 
     }
@@ -209,31 +206,32 @@ public class MainView extends UI {
     private void updateUI() throws JSONException {
         String city = cityTextField.getValue().toUpperCase();
 
-        currentLocationTitle.setValue("Currently in "+city);
+        currentLocationTitle.setValue("Currently in " + city);
         JSONObject mainData = weatherService.getWeatherMainData(city);
 
-        int temp = mainData.getInt("temp");
-        currentTemp.setValue(temp+"C");
+        double temp = mainData.getDouble("temp");
+        currentTemp.setValue(temp + "C");
 
-        String iconCode = null;
+        String iconCode = "";
+        String description = "";
         JSONArray jsonArray = weatherService.weatherDataArray(city);
 
-        for(int i = 0; i<jsonArray.length();i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject weatherObject = jsonArray.getJSONObject(i);
+            description = weatherObject.getString("description");
             iconCode = weatherObject.getString("icon");
         }
-
-        iconImage.setSource(new ExternalResource("http://openweathermap.org/img/wn/"+iconCode+"@2x.png"));
-
+        iconImage.setSource(new ExternalResource("http://openweathermap.org/img/wn/" + iconCode + "@2x.png"));
         dashBoardMain.addComponents(currentLocationTitle, iconImage, currentTemp);
-
         mainLayout.addComponent(dashBoardMain);
+        weatherDescription.setValue("Cloudiness: " + description);
 
-        showDescription();
+
+
 
     }
 
-    private void showDescription(){
+    private void showDescription() {
 
     }
 }
